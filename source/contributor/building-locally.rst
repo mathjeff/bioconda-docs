@@ -30,10 +30,10 @@ You can install ``bioconda-utils`` locally by creating a new conda environment:
     conda activate bioconda
 
     # optional linting
-    bioconda-utils lint --git-range master
+    bioconda-utils lint --git-range master HEAD
 
     # build and test
-    bioconda-utils build --docker --mulled-test --git-range master
+    bioconda-utils build --docker --mulled-test --git-range master HEAD
 
 The above commands do the following:
 
@@ -45,9 +45,9 @@ The above commands do the following:
 
 .. note::
 
-   - You can select recipes to lint/build using ``--git-range master``,
-     which which will select those recipes that have been changed
-     between your master and your branch. Or you can specify recipes
+   - You can select recipes to lint/build using ``--git-range master HEAD``,
+     which will select those recipes that have been changed
+     between your local branch and master. Or you can specify recipes
      directly using ``--packages mypackage1 mypackage2``.
    - The ``--docker`` flag instructs ``bioconda-utils`` to execute the
      build within a docker container. On MacOS, this will do a Linux
@@ -63,10 +63,43 @@ The above commands do the following:
 If you do not have access to Docker, you can still run the basic test by
 omitting the ``--docker`` and ``--mulled-test`` options.
 
-Using the "Debug" Method
-~~~~~~~~~~~~~~~~~~~~~~~~
+Other CLI Commands
+~~~~~~~~~~~~~~~~~
 
-.. todo::
+Beyond ``lint`` and ``build``, ``bioconda-utils`` provides several
+other commands for development and maintenance:
 
-   - Explain how to use ``conda debug`` for difficult recipes.
-   - Explain how to create patch series.
+``bioconda-utils dag``
+   Export the recipe dependency graph. Use ``--format gml`` (default),
+   ``dot``, or ``txt``. The ``txt`` format groups recipes by build
+   order (sub-DAGs), useful for understanding build dependencies.
+   ``--hide-singletons`` omits leaf packages with no dependencies::
+
+     bioconda-utils dag recipes/ config.yml --packages mypkg --format txt
+
+``bioconda-utils dependent``
+   Show which recipes depend on a package (reverse dependencies) or
+   which packages a recipe depends on (forward dependencies)::
+
+     bioconda-utils dependent recipes/ config.yml --reverse-dependencies mypkg
+
+``bioconda-utils duplicates``
+   Detect packages in bioconda that also exist in another channel
+   (e.g. conda-forge). With ``--strict-version`` and ``--strict-build``
+   you can control how strictly duplicates are matched. Pass
+   ``--remove`` to delete from the channel (requires ``--strict-build``
+   and ``ANACONDA_TOKEN``)::
+
+     bioconda-utils duplicates config.yml
+
+``bioconda-utils clean-cran-skeleton``
+   Clean up recipes created by ``conda skeleton cran`` for Bioconda
+   submission. Removes Windows-specific entries and comments::
+
+     bioconda-utils clean-cran-skeleton recipes/r-mypackage/meta.yaml --no-windows
+
+``bioconda-utils handle-merged-pr``
+   Upload artifacts from a merged PR. If no artifacts are found,
+   falls back to rebuilding the recipe::
+
+     bioconda-utils handle-merged-pr recipes/ config.yml --repo bioconda/bioconda-recipes --git-range master HEAD
