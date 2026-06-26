@@ -198,11 +198,7 @@ which is then passed to `build.build
    <https://github.com/bioconda/bioconda-utils/blob/2c5d4ad754f7bfa17b90495dc602118c7270d4bc/bioconda_utils/build.py#L61>`_.
 
 - Container registry credentials for uploading images to quay.io are configured
-  via environment variables. Set ``QUAY_LOGIN`` (in ``user:password`` format)
-  or ``QUAY_OAUTH_TOKEN`` (a Quay OAuth token). These are read by
-  ``bioconda_utils.container_manifests.registry_creds()`` and passed to
-  `skopeo <https://github.com/containers/skopeo>`_ and ``docker buildx`` for
-  authentication.
+  via environment variables (see :ref:`credentials` for details).
 
 The bot
 -------

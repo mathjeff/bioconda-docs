@@ -63,6 +63,8 @@ The above commands do the following:
 If you do not have access to Docker, you can still run the basic test by
 omitting the ``--docker`` and ``--mulled-build-and-test`` options.
 
+.. _credentials:
+
 .. note::
 
    Some :program:`bioconda-utils` commands need credentials to interact with
